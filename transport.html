@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vận chuyển</title>
+  <!-- Import CSS libraries and styles -->
+  <!-- Your existing CSS links -->
+  <style>
+    /* Your custom CSS styles */
+    td img {
+      width: 200px;
+      object-fit: cover;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Your existing HTML content -->
+
+  <table style="width:100%; text-align: center;border-collapse: collapse;" border="1">
+    <thead>
+      <tr>
+        <th>Sản Phẩm</th>
+        <th>Tên</th>
+        <th>Thương hiệu</th>
+        <th>Giá</th>
+        <th>Số lượng</th>
+        <th>Thành tiền</th> <!-- Cột Thành tiền -->
+      </tr>
+    </thead>
+    <tbody id="cart-items"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5">Tổng tiền:</td>
+        <td id="total-price"></td> <!-- Cột Thành tiền cho Tổng tiền -->
+      </tr>
+    </tfoot>
+  </table>
+
+  <!-- Your existing JavaScript code -->
+
+  <script>
+    // Get the cart from localStorage
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    // Get the table body element to populate the cart items
+    const cartItemsBody = document.getElementById("cart-items");
+
+    function calculateSubtotal(product) {
+return product.price * product.quantity;
+}
+
+
+  // Function to calculate the total price of items in the cart
+function calculateTotalPrice() {
+  let totalPrice = 0;
+  cart.forEach(product => {
+    // Kiểm tra tính hợp lệ của giá và số lượng
+    if (!isNaN(product.price) && !isNaN(product.quantity) && product.price >= 0 && product.quantity >= 0) {
+      // Tính toán thành tiền cho sản phẩm và cộng vào tổng tiền
+      totalPrice += product.price * product.quantity;
+    }
+  });
+  return totalPrice;
+}
+
+
+    // Function to render the cart items
+    function renderCartItems() {
+      cartItemsBody.innerHTML = "";
+
+      let totalPrice = 0; // Biến để tính tổng tiền của toàn bộ giỏ hàng
+
+      cart.forEach((product, index) => {
+        const row = document.createElement("tr");
+        const productImgCell = document.createElement("td");
+        const productImg = document.createElement("img");
+        productImg.src = product.preview;
+        productImg.alt = product.name;
+        productImgCell.appendChild(productImg);
+        row.appendChild(productImgCell);
+
+        const productNameCell = document.createElement("td");
+        productNameCell.textContent = product.name;
+        row.appendChild(productNameCell);
+
+        const productBrandCell = document.createElement("td");
+        productBrandCell.textContent = product.brand;
+        row.appendChild(productBrandCell);
+
+        const productPriceCell = document.createElement("td");
+        productPriceCell.textContent = product.price;
+        row.appendChild(productPriceCell);
+
+        const quantityCell = document.createElement("td");
+        const quantityText = document.createElement("span");
+        quantityText.textContent = product.quantity;
+        quantityCell.appendChild(quantityText);
+        row.appendChild(quantityCell);
+
+            // Tính và hiển thị thành tiền cho từng sản phẩm
+      const subtotalCell = document.createElement("td");
+      const subtotal = product.price * product.quantity;
+
+      // Kiểm tra nếu giá hoặc số lượng không hợp lệ thì hiển thị 0
+      if (isNaN(subtotal)) {
+        subtotalCell.textContent = "0.00";
+      } else {
+        subtotalCell.textContent = subtotal.toFixed(2); // Hiển thị thành tiền với 2 chữ số sau dấu phẩy
+      }
+
+      row.appendChild(subtotalCell);
+
+      cartItemsBody.appendChild(row);
+
+      totalPrice += isNaN(subtotal) ? 0 : subtotal; // Cộng vào tổng tiền, nếu subtotal là NaN thì cộng 0
+      //totalPrice += subtotal;
+    });
+
+    // Hiển thị tổng tiền của toàn bộ giỏ hàng
+    const totalPriceElement = document.getElementById("total-price");
+    totalPriceElement.textContent = totalPrice.toFixed(2); // Hiển thị tổng tiền với 2 chữ số sau dấu phẩy
+  }
+    // Initial rendering of cart items
+    renderCartItems();
+  </script>
+
+  <!-- Your existing JavaScript code -->
+
+</body>
+
+</html>
